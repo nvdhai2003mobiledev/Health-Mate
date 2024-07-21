@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Alert,
   Image,
   Pressable,
   StyleSheet,
@@ -7,9 +8,9 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Color from '../style/Color';
-import {signInWithEmailAndPassword} from 'firebase/auth';
+import {onAuthStateChanged, signInWithEmailAndPassword} from 'firebase/auth';
 import {FIREBASE_AUTH} from '../../FirebaseConfig';
 
 const LoginScreen = ({navigation}: {navigation: any}) => {
@@ -22,9 +23,15 @@ const LoginScreen = ({navigation}: {navigation: any}) => {
     setLoading(true);
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate('HomeScreen', {user});
+      if (!email.trim() ||!password.trim()) {
+        Alert.alert('Please enter your email and password');
+        return;
+      }
+      navigation.navigate('BottomTab', {user});
     } catch (error) {
       console.log(error);
+      Alert.alert('Email or password is incorrect');
+      return;
     } finally {
       setLoading(false);
     }
@@ -95,7 +102,7 @@ const LoginScreen = ({navigation}: {navigation: any}) => {
         <Text
           style={[
             styles.textButton,
-            {fontFamily: 'SF-Pro-Rounded-SemiBold', paddingVertical: 4},
+            {fontFamily: 'SF-Pro-Rounded-Semibold', color: 'black'},
           ]}>
           Continue With Google
         </Text>
@@ -115,7 +122,7 @@ const LoginScreen = ({navigation}: {navigation: any}) => {
           <Text
             style={{
               color: Color.primaryColor,
-              fontFamily: 'SF-Pro-Rounded-Bold',
+              fontFamily: 'SF-Pro-Rounded-Semibold',
             }}
             onPress={() => navigation.navigate('RegisterScreen')}>
             Sign Up
@@ -129,7 +136,7 @@ const LoginScreen = ({navigation}: {navigation: any}) => {
             fontSize: 17,
             textAlign: 'center',
             color: Color.primaryColor,
-            fontFamily: 'SF-Pro-Rounded-Bold',
+            fontFamily: 'SF-Pro-Rounded-Semibold',
             marginTop: 10,
           },
         ]}>
@@ -165,21 +172,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontSize: 16,
     fontFamily: 'SF-Pro-Rounded-Regular',
-    borderRadius: 4,
+    borderRadius: 10,
     marginVertical: 8,
     backgroundColor: Color.inputBG,
   },
   button: {
     backgroundColor: Color.primaryColor,
-    borderRadius: 4,
+    borderRadius: 10,
     marginVertical: 30,
     paddingVertical: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
   textButton: {
-    color: Color.textColor,
-    fontFamily: 'SF-Pro-Rounded-Bold',
+    color: 'white',
+    fontFamily: 'SF-Pro-Rounded-Semibold',
     fontSize: 17,
   },
   img: {

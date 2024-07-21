@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Alert,
   Image,
   Pressable,
   StyleSheet,
@@ -10,8 +11,10 @@ import {
 import React, {useState} from 'react';
 import Color from '../style/Color';
 import {ArrowLeft} from 'iconsax-react-native';
-import {FIREBASE_AUTH} from '../../FirebaseConfig';
-import {createUserWithEmailAndPassword} from 'firebase/auth';
+import {FIREBASE_AUTH, FIREBASE_DB} from '../../FirebaseConfig';
+import {createUserWithEmailAndPassword, updateProfile} from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+
 
 const RegisterScreen = ({navigation}: {navigation: any}) => {
   const [email, setEmail] = useState('');
@@ -19,11 +22,49 @@ const RegisterScreen = ({navigation}: {navigation: any}) => {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const auth = FIREBASE_AUTH;
+  const db = FIREBASE_DB;
 
+  const validateForm = () => {
+    if (!email.trim() ||!password.trim() ||!name.trim()) {
+      Alert.alert('Please fill in all fields');
+      return;
+    }
+    if (password.length < 8) {
+      Alert.alert('Password must be at least 8 characters long');
+      return;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      Alert.alert('Invalid email address');
+      return;
+    }
+    if (password.length < 8) {
+      Alert.alert("Error", "Password must be at least 8 characters");
+      return;
+    } else if (!/[a-z]/.test(password)) {
+      Alert.alert("Error", "Password must contain at least one lowercase letter");
+      return;
+    } else if (!/[A-Z]/.test(password)) {
+      Alert.alert("Error", "Password must contain at least one uppercase letter");
+      return;
+    } else if (!/\d/.test(password)) {
+      Alert.alert("Error", "Password must contain at least one number");
+      return;
+    } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      Alert.alert("Error", "Password must contain at least one special character");
+      return;
+    }
+    return true;
+  }
   const signUp = async () => {
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      if (!validateForm()) return;
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      await setDoc(doc(db, 'users', user.uid), {
+        name,
+        email,
+      });
       navigation.navigate('LoginScreen');
     } catch (error) {
       console.error(error);
@@ -112,7 +153,7 @@ const RegisterScreen = ({navigation}: {navigation: any}) => {
         <Text
           style={[
             styles.textButton,
-            {fontFamily: 'SF-Pro-Rounded-SemiBold', paddingVertical: 4},
+            {fontFamily: 'SF-Pro-Rounded-Semibold', color: 'black'},
           ]}>
           Continue With Google
         </Text>
@@ -132,8 +173,10 @@ const RegisterScreen = ({navigation}: {navigation: any}) => {
           <Text
             style={{
               color: Color.primaryColor,
-              fontFamily: 'SF-Pro-Rounded-Bold',
-            }}>
+              fontFamily: 'SF-Pro-Rounded-Semibold',
+            }}
+            onPress={() => navigation.goBack()}
+            >
             Login!
           </Text>
         </Text>
@@ -172,21 +215,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontSize: 16,
     fontFamily: 'SF-Pro-Rounded-Regular',
-    borderRadius: 4,
+    borderRadius: 10,
     marginVertical: 8,
     backgroundColor: Color.inputBG,
   },
   button: {
     backgroundColor: Color.primaryColor,
-    borderRadius: 4,
+    borderRadius: 10,
     marginVertical: 30,
     paddingVertical: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
   textButton: {
-    color: 'black',
-    fontFamily: 'SF-Pro-Rounded-Bold',
+    color: 'white',
+    fontFamily: 'SF-Pro-Rounded-Semibold',
     fontSize: 17,
   },
   img: {
