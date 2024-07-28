@@ -6,7 +6,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { ArrowLeft, BrushBig, ExportSquare, SaveAdd } from 'iconsax-react-native';
 import Color from '../style/Color';
 
-const EditSpiritScreen = ({navigation}: {navigation: any}) => {
+const EditSpiritScreen = ({ navigation }: { navigation: any }) => {
   const route = useRoute();
   const { todoId } = route.params;
   const todo = useSelector(state => state.todos.items.find(t => t.id === todoId));

@@ -1,12 +1,12 @@
-// components/SpiritScreen.js
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, TextInput, ActivityIndicator } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, TextInput } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSearchQuery, deleteTodo, fetchTodos } from '../redux/reducer/todosSlice';
 import { useNavigation } from '@react-navigation/native';
 import Color from '../style/Color';
 import { AddCircle, SearchNormal1 } from 'iconsax-react-native';
 
+// Hàm tạo màu nền sáng và nhẹ nhàng
 const getLightColor = () => {
   const colors = ['#FFDDC1', '#FFABAB', '#FFC3A0', '#B9FBC0', '#C4E5E8', '#E4C1F9'];
   return colors[Math.floor(Math.random() * colors.length)];
@@ -16,7 +16,6 @@ const SpiritScreen = () => {
   const { items, searchQuery } = useSelector(state => state.todos);
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     dispatch(fetchTodos());
@@ -113,7 +112,7 @@ const styles = StyleSheet.create({
   },
   addButton: {
     position: 'absolute',
-    bottom: 100,
+    bottom: 90,
     right: 30,
   },
   date: {

@@ -1,29 +1,39 @@
-// redux/reducer/todosSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
-import { FIREBASE_DB } from '../../../FirebaseConfig';
+
+const API_URL = 'https://665d671de88051d604066b34.mockapi.io/spirit'; // Thay bằng URL API của bạn
 
 // Thunk actions
 export const fetchTodos = createAsyncThunk('todos/fetchTodos', async () => {
-  const querySnapshot = await getDocs(collection(FIREBASE_DB, 'spirits'));
-  const todos = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  return todos;
+  const response = await fetch(API_URL);
+  if (!response.ok) throw new Error('Network response was not ok');
+  return response.json();
 });
 
 export const addTodo = createAsyncThunk('todos/addTodo', async (newTodo) => {
-  const docRef = await addDoc(collection(FIREBASE_DB, 'spirits'), newTodo);
-  return { id: docRef.id, ...newTodo };
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newTodo),
+  });
+  if (!response.ok) throw new Error('Network response was not ok');
+  return response.json();
 });
 
 export const editTodo = createAsyncThunk('todos/editTodo', async (updatedTodo) => {
-  const todoDoc = doc(FIREBASE_DB, 'spirits', updatedTodo.id);
-  await updateDoc(todoDoc, updatedTodo);
-  return updatedTodo;
+  const response = await fetch(`${API_URL}/${updatedTodo.id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updatedTodo),
+  });
+  if (!response.ok) throw new Error('Network response was not ok');
+  return response.json();
 });
 
 export const deleteTodo = createAsyncThunk('todos/deleteTodo', async (id) => {
-  const todoDoc = doc(FIREBASE_DB, 'spirits', id);
-  await deleteDoc(todoDoc);
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) throw new Error('Network response was not ok');
   return id;
 });
 
