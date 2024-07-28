@@ -88,7 +88,7 @@ const UpdateProfile = ({ navigation }: { navigation: any }) => {
         gender,
       });
 
-      Alert.alert('Profile updated successfully');
+      Alert.alert('Success','Profile updated successfully');
       navigation.goBack({ updated: true }); // Điều hướng về màn hình Profile với dữ liệu cập nhật
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -100,7 +100,6 @@ const UpdateProfile = ({ navigation }: { navigation: any }) => {
     <View style={styles.container}>
       <View style={styles.toolbar}>
         <ArrowLeft size={32} color='black' onPress={() => navigation.goBack()}/>
-        <Text style={styles.textToolbar}>Update Profile</Text>
       </View>
       <View style = {{alignItems: 'center'}}>
         <Image source={require('../assets/images/user.png')} style = {styles.img}/>

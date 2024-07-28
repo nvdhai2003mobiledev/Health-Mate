@@ -7,12 +7,11 @@ import { useNavigation } from '@react-navigation/native';
 import { ArrowLeft, BrushBig, ExportSquare, SaveAdd } from 'iconsax-react-native';
 import Color from '../style/Color';
 
-const AddSpiritScreen = () => {
+const AddSpiritScreen = ({navigation}: {navigation: any}) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [currentDate, setCurrentDate] = useState('');
   const dispatch = useDispatch();
-  const navigation = useNavigation();
   const dayCount = useSelector(state => state.todos.dayCount);
 
   useEffect(() => {
@@ -36,7 +35,7 @@ const AddSpiritScreen = () => {
   const handleAddTodo = () => {
     if (!validateForm()) return;
     const newTodo = {
-      id: uuidv4(),
+      id: uuidv4(), // UUID cho mỗi todo mới
       day: `Spirit ${dayCount + 1}`,
       title,
       content,
@@ -50,33 +49,20 @@ const AddSpiritScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginTop: 20,
-        }}>
+      <View style={styles.header}>
         <ArrowLeft size={24} color="black" onPress={() => navigation.goBack()} />
-        <View style={{ flexDirection: 'row', gap: 20 }}>
+        <View style={styles.icons}>
           <ExportSquare size={24} color="black" />
           <BrushBig size={24} color="black" />
           <SaveAdd size={24} color="black" />
         </View>
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          marginTop: 30,
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 20,
-        }}>
+      <View style={styles.info}>
         <Text style={styles.textSp}>Spirit {dayCount + 1}</Text>
         <Text style={styles.date}>{currentDate}</Text>
       </View>
       <TextInput
-        style={[styles.input, { fontFamily: 'SF-Pro-Rounded-Semibold' }]}
+        style={styles.input}
         placeholder="Title"
         value={title}
         onChangeText={setTitle}
@@ -100,6 +86,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 30,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  icons: {
+    flexDirection: 'row',
+    gap: 20,
+  },
+  info: {
+    flexDirection: 'row',
+    marginTop: 30,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
   },
   input: {
     borderWidth: 1,

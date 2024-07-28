@@ -1,7 +1,7 @@
-import {View, Text} from 'react-native';
+import { View, Text } from 'react-native';
 import React from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {NavigationContainer} from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
 import SplashScreen from '../screens/SplashScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
@@ -9,12 +9,17 @@ import HomeScreen from '../screens/HomeScreen';
 import CustomStatusBar from '../components/CustomStatusBar';
 import BottomNavigation from './BottomNavigation';
 import AddSpiritScreen from '../screens/AddSpiritScreen';
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
 
 import EditSpiritScreen from '../screens/EditSpiritScreen';
 import UpdateProfile from '../screens/UpdateProfile';
 import ProfileScreen from '../screens/ProfileScreen';
 import store from '../redux/store/store';
+import StepDetailScreen from '../screens/StepDetailScreen';
+import SleepDetailScreen from '../screens/SleepDetailScreen';
+
+
+
 
 const MainStack = createNativeStackNavigator();
 
@@ -25,7 +30,7 @@ const MainNavigation = () => {
         <CustomStatusBar barStyle="dark-content" />
         <MainStack.Navigator
           initialRouteName="SplashScreen"
-          screenOptions={{headerShown: false}}>
+          screenOptions={{ headerShown: false }}>
           <MainStack.Screen name="SplashScreen" component={SplashScreen} />
           <MainStack.Screen name="LoginScreen" component={LoginScreen} />
           <MainStack.Screen name="RegisterScreen" component={RegisterScreen} />
@@ -54,6 +59,20 @@ const MainNavigation = () => {
           <MainStack.Screen
             name="UpdateProfile"
             component={UpdateProfile}
+            options={{
+              animation: 'fade_from_bottom',
+            }}
+          />
+          <MainStack.Screen
+            name="StepsDetail"
+            component={StepDetailScreen}
+            options={{
+              animation: 'fade_from_bottom',
+            }}
+          />
+          <MainStack.Screen
+            name="SleepDetail"
+            component={SleepDetailScreen}
             options={{
               animation: 'fade_from_bottom',
             }}

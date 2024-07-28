@@ -1,7 +1,7 @@
-import {View, Text} from 'react-native';
+import { View, Text } from 'react-native';
 import React from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {NavigationContainer} from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from '../screens/HomeScreen';
 import PracticeScreen from '../screens/PracticeScreen';
 import SpiritScreen from '../screens/SpiritScreen';
@@ -20,9 +20,9 @@ const Tabs = createBottomTabNavigator();
 const BottomNavigation = () => {
   return (
     <Tabs.Navigator
-    initialRouteName='Home'
-      screenOptions={({route}) => ({
-        tabBarIcon: ({focused}) => {
+      initialRouteName='Home'
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused }) => {
           let IconComponent;
           let color = focused ? Color.primaryColor : '#ADADAF';
           let variant = 'Bold';
@@ -43,14 +43,24 @@ const BottomNavigation = () => {
         },
         tabBarShowLabel: false,
         tabBarStyle: {
-          height: 70,
+          height: 60,
           border: 'none',
+          paddingHorizontal: 10,
+          position: 'absolute',
+          bottom: 20,
+          left: 30,
+          right: 30,
+          borderRadius: 16,
+          elevation: 10,
+          shadowColor: '#000',
+          shadowOpacity: 0.1,
+          shadowOffset: { width: 0, height: 10 },
+          shadowRadius: 20,
         },
         headerShown: false,
       })}>
       <Tabs.Screen name="Home" component={HomeScreen} />
       <Tabs.Screen name="Practice" component={PracticeScreen} />
-      <Tabs.Screen name="Friend" component={FriendScreen} />
       <Tabs.Screen name="Spirit" component={SpiritScreen} />
       <Tabs.Screen name="Profile" component={ProfileScreen} />
     </Tabs.Navigator>

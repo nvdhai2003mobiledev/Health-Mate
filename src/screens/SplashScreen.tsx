@@ -3,10 +3,10 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 
 
-const SplashScreen = ({navigation}: {navigation: any}) => {
+const SplashScreen = ({ navigation }: { navigation: any }) => {
   useEffect(() => {
     setTimeout(() => {
       navigation.navigate('LoginScreen');

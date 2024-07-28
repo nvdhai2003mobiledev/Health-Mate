@@ -24,47 +24,84 @@ const RegisterScreen = ({navigation}: {navigation: any}) => {
   const auth = FIREBASE_AUTH;
   const db = FIREBASE_DB;
 
-  const validateForm = () => {
-    if (!email.trim() ||!password.trim() ||!name.trim()) {
-      Alert.alert('Please fill in all fields');
-      return;
+  const [errors, setErrors] = useState({});
+
+  const validateEmail = (email) => {
+    if (!email.trim()) {
+      return 'Email is required';
     }
-    if (password.length < 8) {
-      Alert.alert('Password must be at least 8 characters long');
-      return;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return 'Please enter a valid email address';
     }
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      Alert.alert('Invalid email address');
-      return;
+    return '';
+  };
+
+  const validatePassword = (password) => {
+    if (!password.trim()) {
+      return 'Password is required';
     }
-    if (password.length < 8) {
-      Alert.alert("Error", "Password must be at least 8 characters");
-      return;
-    } else if (!/[a-z]/.test(password)) {
-      Alert.alert("Error", "Password must contain at least one lowercase letter");
-      return;
-    } else if (!/[A-Z]/.test(password)) {
-      Alert.alert("Error", "Password must contain at least one uppercase letter");
-      return;
-    } else if (!/\d/.test(password)) {
-      Alert.alert("Error", "Password must contain at least one number");
-      return;
-    } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      Alert.alert("Error", "Password must contain at least one special character");
-      return;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{7,}$/;
+    if (!passwordRegex.test(password)) {
+      return 'Password must be more than 6 characters and contain uppercase letters, lowercase letters, numbers, and special characters';
     }
-    return true;
-  }
+    return '';
+  };
+
+  const validateName = (name) => {
+    if (!name.trim()) {
+      return 'Name is required';
+    }
+    return '';
+  };
+
+  const handleEmailChange = (email) => {
+    setEmail(email);
+    const emailError = validateEmail(email);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      email: emailError,
+    }));
+  };
+
+  const handlePasswordChange = (password) => {
+    setPassword(password);
+    const passwordError = validatePassword(password);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      password: passwordError,
+    }));
+  };
+
+  const handleNameChange = (name) => {
+    setName(name);
+    const nameError = validateName(name);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      name: nameError,
+    }));
+  };
+
   const signUp = async () => {
     setLoading(true);
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
+    const nameError = validateName(name);
+
+    setErrors({
+      email: emailError,
+      password: passwordError,
+      name: nameError,
+    });
     try {
-      if (!validateForm()) return;
+      if (emailError && passwordError && nameError) return;
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       await setDoc(doc(db, 'users', user.uid), {
         name,
         email,
       });
+      Alert.alert('Success', 'Registration successful');
       navigation.navigate('LoginScreen');
     } catch (error) {
       console.error(error);
@@ -90,32 +127,35 @@ const RegisterScreen = ({navigation}: {navigation: any}) => {
       </View>
       <View style={styles.form}>
         <TextInput
-          style={styles.input}
-          placeholder="Enter your email"
+          placeholder='Enter your email'
+          style={[styles.input, errors.email && styles.inputError]}
           placeholderTextColor={Color.hintColor}
           value={email}
           autoCapitalize="none"
-          onChangeText={text => setEmail(text)}
+          onChangeText={handleEmailChange}
           keyboardType="email-address"
         />
+          {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
         <TextInput
-          style={styles.input}
+          style={[styles.input, errors.name && styles.inputError]}
           placeholder="Enter your name"
           placeholderTextColor={Color.hintColor}
           value={name}
           autoCapitalize="none"
-          onChangeText={text => setName(text)}
+          onChangeText={handleNameChange}
           keyboardType="default"
         />
+         {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
         <TextInput
-          style={styles.input}
+          style={[styles.input, errors.password && styles.inputError]}
           placeholder="Enter your password"
           placeholderTextColor={Color.hintColor}
           value={password}
           autoCapitalize="none"
-          onChangeText={text => setPassword(text)}
+          onChangeText={handlePasswordChange}
           secureTextEntry={true}
         />
+        {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
         {loading && (
           <ActivityIndicator size="large" color="#000" style={styles.loading} />
         )}
@@ -190,6 +230,14 @@ export default RegisterScreen;
 const styles = StyleSheet.create({
   loading: {
     marginTop: 20,
+  },
+  inputError: {
+    borderColor: 'red',
+  },
+  errorText: {
+    color: 'red',
+    marginTop: -5,
+    fontFamily: 'SF-Pro-Rounded-Medium',
   },
   backIcon: {
     marginHorizontal: 24,

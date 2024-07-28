@@ -1,3 +1,5 @@
+// File path: src/screens/LoginScreen.js
+
 import {
   ActivityIndicator,
   Alert,
@@ -17,25 +19,72 @@ const LoginScreen = ({navigation}: {navigation: any}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
   const auth = FIREBASE_AUTH;
 
+  const validateEmail = (email) => {
+    if (!email) {
+      return 'Email is required';
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return 'Please enter a valid email address';
+    }
+    return '';
+  };
+
+  const validatePassword = (password) => {
+    if (!password) {
+      return 'Password is required';
+    }
+    return '';
+  };
+
+  const handleEmailChange = (email) => {
+    setEmail(email);
+    const emailError = validateEmail(email);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      email: emailError,
+    }));
+  };
+
+  const handlePasswordChange = (password) => {
+    setPassword(password);
+    const passwordError = validatePassword(password);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      password: passwordError,
+    }));
+  };
+
   const signIn = async () => {
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
+
+    setErrors({
+      email: emailError,
+      password: passwordError,
+    });
+
+    if (emailError || passwordError) {
+      Alert.alert('Please correct the highlighted errors');
+      return;
+    }
+
     setLoading(true);
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
-      if (!email.trim() ||!password.trim()) {
-        Alert.alert('Please enter your email and password');
-        return;
-      }
+      Alert.alert('Success', 'Login successful');
       navigation.navigate('BottomTab', {user});
     } catch (error) {
       console.log(error);
       Alert.alert('Email or password is incorrect');
-      return;
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <View style={{marginTop: 85, marginHorizontal: 30}}>
@@ -47,24 +96,27 @@ const LoginScreen = ({navigation}: {navigation: any}) => {
       </View>
       <View style={styles.form}>
         <TextInput
-          style={styles.input}
+          style={[styles.input, errors.email && styles.inputError]}
           placeholder="Enter your email"
           placeholderTextColor={Color.hintColor}
           value={email}
           autoCapitalize="none"
-          onChangeText={text => setEmail(text)}
+          onChangeText={handleEmailChange}
           keyboardType="email-address"
         />
+        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
         <TextInput
-          style={styles.input}
+          style={[styles.input, errors.password && styles.inputError]}
           placeholder="Enter your password"
           placeholderTextColor={Color.hintColor}
           value={password}
           autoCapitalize="none"
-          onChangeText={text => setPassword(text)}
+          onChangeText={handlePasswordChange}
           secureTextEntry={true}
         />
+        {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+
         {loading && (
           <ActivityIndicator size="large" color="#000" style={styles.loading} />
         )}
@@ -175,6 +227,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginVertical: 8,
     backgroundColor: Color.inputBG,
+  },
+  inputError: {
+    borderColor: 'red',
+  },
+  errorText: {
+    color: 'red',
+    marginTop: 4,
   },
   button: {
     backgroundColor: Color.primaryColor,

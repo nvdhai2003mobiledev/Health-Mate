@@ -2,17 +2,17 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { View, TextInput, Pressable, StyleSheet, Text, Alert } from 'react-native';
 import { editTodo } from '../redux/reducer/todosSlice';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { ArrowLeft, BrushBig, ExportSquare, SaveAdd } from 'iconsax-react-native';
 import Color from '../style/Color';
 
-const EditSpiritScreen = ({ route }) => {
+const EditSpiritScreen = ({navigation}: {navigation: any}) => {
+  const route = useRoute();
   const { todoId } = route.params;
   const todo = useSelector(state => state.todos.items.find(t => t.id === todoId));
   const [title, setTitle] = useState(todo.title);
   const [content, setContent] = useState(todo.content);
   const dispatch = useDispatch();
-  const navigation = useNavigation();
 
   const handleEditTodo = () => {
     if (!title.trim() || !content.trim()) {
@@ -29,33 +29,20 @@ const EditSpiritScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginTop: 20,
-        }}>
+      <View style={styles.header}>
         <ArrowLeft size={24} color="black" onPress={() => navigation.goBack()} />
-        <View style={{ flexDirection: 'row', gap: 20 }}>
+        <View style={styles.icons}>
           <ExportSquare size={24} color="black" />
           <BrushBig size={24} color="black" />
           <SaveAdd size={24} color="black" />
         </View>
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          marginTop: 30,
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 20,
-        }}>
+      <View style={styles.info}>
         <Text style={styles.textSp}>Spirit {todo.day.split(' ')[1]}</Text>
         <Text style={styles.date}>{todo.date}</Text>
       </View>
       <TextInput
-        style={[styles.input, { fontFamily: 'SF-Pro-Rounded-Semibold' }]}
+        style={styles.input}
         placeholder="Title"
         value={title}
         onChangeText={setTitle}
@@ -79,6 +66,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 30,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  icons: {
+    flexDirection: 'row',
+    gap: 20,
+  },
+  info: {
+    flexDirection: 'row',
+    marginTop: 30,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
   },
   input: {
     borderWidth: 1,

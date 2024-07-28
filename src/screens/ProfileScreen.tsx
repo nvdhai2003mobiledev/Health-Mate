@@ -51,7 +51,11 @@ const ProfileScreen = ({ navigation }: { navigation: any }) => {
   }, [navigation, userId]);
 
   if (loading) {
-    return <ActivityIndicator size="large" color="#000" />;
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#000" />
+      </View>
+    )
   }
 
   const handleLogout = () => {
@@ -246,6 +250,11 @@ const styles = StyleSheet.create({
     fontFamily: 'SF-Pro-Rounded-Semibold',
     fontSize: 17,
   },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });
 
 export default ProfileScreen;

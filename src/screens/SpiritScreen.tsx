@@ -1,31 +1,33 @@
-import { View, Text, StyleSheet, Pressable, TextInput, FlatList, TouchableOpacity, Alert, Image } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome6';
-import { AddCircle, SearchNormal1 } from 'iconsax-react-native';
+// components/SpiritScreen.js
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, TextInput, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSearchQuery, deleteTodo } from '../redux/reducer/todosSlice';
+import { setSearchQuery, deleteTodo, fetchTodos } from '../redux/reducer/todosSlice';
 import { useNavigation } from '@react-navigation/native';
 import Color from '../style/Color';
-import React from 'react';
+import { AddCircle, SearchNormal1 } from 'iconsax-react-native';
 
-// Hàm tạo màu nền sáng và nhẹ nhàng
 const getLightColor = () => {
   const colors = ['#FFDDC1', '#FFABAB', '#FFC3A0', '#B9FBC0', '#C4E5E8', '#E4C1F9'];
   return colors[Math.floor(Math.random() * colors.length)];
 };
 
-const SpiritScreen = ({ navigation }: { navigation: any }) => {
+const SpiritScreen = () => {
   const { items, searchQuery } = useSelector(state => state.todos);
   const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const [loading, setLoading] = useState(true);
 
-  // Thêm màu nền cho từng item trong dữ liệu
-  const getItemWithColor = (item) => ({
-    ...item,
-    backgroundColor: getLightColor(),
-  });
+  useEffect(() => {
+    dispatch(fetchTodos());
+  }, [dispatch]);
 
   const filteredItems = items.filter(item =>
     item.title.toLowerCase().includes(searchQuery.toLowerCase())
-  ).map(getItemWithColor);
+  ).map(item => ({
+    ...item,
+    backgroundColor: getLightColor(),
+  }));
 
   const confirmDelete = id => {
     Alert.alert(
@@ -46,9 +48,7 @@ const SpiritScreen = ({ navigation }: { navigation: any }) => {
     <View style={styles.container}>
       <View style={styles.toolbar}>
         <Text style={styles.textToolbar}>Spirit</Text>
-        <Icon name="ellipsis-vertical" size={24} color="black" />
       </View>
-     
       <View style={styles.input}>
         <TextInput
           placeholder="Enter your title"
@@ -64,7 +64,7 @@ const SpiritScreen = ({ navigation }: { navigation: any }) => {
         <Text style={styles.noResults}>No results found</Text>
       ) : (
         <FlatList
-          data={searchQuery ? filteredItems : items.map(getItemWithColor)}
+          data={filteredItems}
           keyExtractor={item => item.id}
           renderItem={({ item }) => (
             <TouchableOpacity
@@ -87,7 +87,7 @@ const SpiritScreen = ({ navigation }: { navigation: any }) => {
                     {item.content}
                   </Text>
                 </View>
-                <View style={{ paddingTop: 6 , alignItems: 'center'}}>
+                <View style={{ paddingTop: 6, alignItems: 'center' }}>
                   <Text style={styles.date}>{item.date}</Text>
                 </View>
               </View>
@@ -97,7 +97,7 @@ const SpiritScreen = ({ navigation }: { navigation: any }) => {
       )}
       <AddCircle
         size={55}
-        color= {Color.primaryColor}
+        color={Color.primaryColor}
         variant="Bold"
         style={styles.addButton}
         onPress={() => navigation.navigate('AddSpiritScreen')}
@@ -113,22 +113,13 @@ const styles = StyleSheet.create({
   },
   addButton: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 100,
     right: 30,
-  },
-  img: {
-    width: 50, height: 50,
-    marginTop: 10
   },
   date: {
     fontFamily: 'SF-Pro-Rounded-Regular',
     fontSize: 12,
     color: '#828282',
-  },
-  textButton: {
-    fontSize: 40,
-    color: '#fff',
-    fontFamily: 'SF-Pro-Rounded-Semibold',
   },
   toolbar: {
     width: '100%',
@@ -172,12 +163,7 @@ const styles = StyleSheet.create({
     fontFamily: 'SF-Pro-Rounded-Regular',
     textAlign: 'center',
     marginTop: 20,
-    fontSize: 16
-  },
-  todoItem: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    fontSize: 16,
   },
   todoTitle: {
     fontSize: 16,
