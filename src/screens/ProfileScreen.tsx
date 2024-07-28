@@ -4,6 +4,7 @@ import {
   Alert,
   Image,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -11,7 +12,7 @@ import {
 import { FIREBASE_AUTH, FIREBASE_DB } from '../../FirebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
 import Color from '../style/Color';
-import { ArrowRight2 } from 'iconsax-react-native';
+import { ArrowRight2, LogoutCurve } from 'iconsax-react-native';
 
 const ProfileScreen = ({ navigation }: { navigation: any }) => {
   const [userData, setUserData] = useState(null);
@@ -55,7 +56,7 @@ const ProfileScreen = ({ navigation }: { navigation: any }) => {
       <View style={styles.center}>
         <ActivityIndicator size="large" color="#000" />
       </View>
-    )
+    );
   }
 
   const handleLogout = () => {
@@ -96,12 +97,16 @@ const ProfileScreen = ({ navigation }: { navigation: any }) => {
       ? userData.weight / (heightInMeters * heightInMeters)
       : 0;
 
+  const dietarySuggestions = getDietarySuggestions(bmi);
+
   return (
     <View style={styles.container}>
       <View style={styles.toolbar}>
         <Text style={styles.textToolbar}>My Profile</Text>
+        <LogoutCurve size={28} color='#000' variant='Linear' onPress={confirmSignOut} />
       </View>
       <Pressable onPress={() => navigation.navigate('UpdateProfile')}>
+
         <View
           style={{
             marginHorizontal: 30,
@@ -117,7 +122,7 @@ const ProfileScreen = ({ navigation }: { navigation: any }) => {
             <Text style={styles.emailText}>{userData?.email || 'N/A'}</Text>
           </View>
         </View>
-        <View style={{ marginHorizontal: 30, marginTop: 40 }}>
+        <View style={{ marginHorizontal: 30, marginTop: 30 }}>
           <View style={styles.item}>
             <Text style={styles.text}>Gender </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
@@ -154,13 +159,28 @@ const ProfileScreen = ({ navigation }: { navigation: any }) => {
               <Text style={styles.textT}> {bmi ? bmi.toFixed(1) : 'N/A'}</Text>
             </View>
           </View>
+          <View style={[styles.item, { flexDirection: 'column', alignItems: 'flex-start' }]}>
+            <Text style={styles.text}>Dietary Suggestions </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Text style={styles.textT}> {dietarySuggestions}</Text>
+            </View>
+          </View>
         </View>
-      </Pressable>
-      <Pressable style={styles.button} onPress={confirmSignOut}>
-        <Text style={styles.textButton}>Sign out</Text>
       </Pressable>
     </View>
   );
+};
+
+const getDietarySuggestions = (bmi) => {
+  if (bmi < 18.5) {
+    return 'Your BMI indicates that you are underweight. Consider incorporating more nutrient-dense foods into your diet, such as lean meats, dairy, nuts, and healthy fats. Eating more frequent, balanced meals can also help.';
+  } else if (bmi >= 18.5 && bmi < 24.9) {
+    return 'Your BMI is in the normal range. Continue eating a balanced diet that includes a variety of fruits, vegetables, lean proteins, and whole grains. Regular physical activity is also important for maintaining your health.';
+  } else if (bmi >= 25 && bmi < 29.9) {
+    return 'Your BMI indicates that you are overweight. Consider reducing your intake of high-calorie foods and increasing your physical activity. Focus on eating more fruits, vegetables, lean proteins, and whole grains.';
+  } else {
+    return 'Your BMI indicates that you are obese. It is important to consult with a healthcare provider for personalized advice. Generally, a diet rich in fruits, vegetables, lean proteins, and whole grains, combined with regular physical activity, can help you achieve a healthier weight.';
+  }
 };
 
 const styles = StyleSheet.create({
@@ -170,7 +190,7 @@ const styles = StyleSheet.create({
   },
   toolbar: {
     width: '100%',
-    height: 100,
+    height: 80,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -232,7 +252,7 @@ const styles = StyleSheet.create({
   },
   textT: {
     fontFamily: 'SF-Pro-Rounded-Regular',
-    fontSize: 16,
+    fontSize: 14,
     color: '#7B6F72',
   },
   button: {

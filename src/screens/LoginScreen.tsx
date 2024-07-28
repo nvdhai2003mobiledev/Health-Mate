@@ -10,12 +10,12 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Color from '../style/Color';
-import {onAuthStateChanged, signInWithEmailAndPassword} from 'firebase/auth';
-import {FIREBASE_AUTH} from '../../FirebaseConfig';
+import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
+import { FIREBASE_AUTH } from '../../FirebaseConfig';
 
-const LoginScreen = ({navigation}: {navigation: any}) => {
+const LoginScreen = ({ navigation }: { navigation: any }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -76,7 +76,7 @@ const LoginScreen = ({navigation}: {navigation: any}) => {
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
       Alert.alert('Success', 'Login successful');
-      navigation.navigate('BottomTab', {user});
+      navigation.navigate('BottomTab', { user });
     } catch (error) {
       console.log(error);
       Alert.alert('Email or password is incorrect');
@@ -86,10 +86,10 @@ const LoginScreen = ({navigation}: {navigation: any}) => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: '#fff'}}>
-      <View style={{marginTop: 85, marginHorizontal: 30}}>
+    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+      <View style={{ marginTop: 85, marginHorizontal: 30 }}>
         <Text style={styles.title}>Welcome to Health Mate</Text>
-        <Text style={[styles.hint, {marginTop: -8}]}>
+        <Text style={[styles.hint, { marginTop: -8 }]}>
           Hello there, sign in to {'\n'}
           continue!
         </Text>
@@ -154,12 +154,12 @@ const LoginScreen = ({navigation}: {navigation: any}) => {
         <Text
           style={[
             styles.textButton,
-            {fontFamily: 'SF-Pro-Rounded-Semibold', color: 'black'},
+            { fontFamily: 'SF-Pro-Rounded-Semibold', color: 'black' },
           ]}>
           Continue With Google
         </Text>
       </View>
-      <View style={{marginTop: 50}}>
+      <View style={{ marginTop: 50 }}>
         <Text
           style={[
             styles.hint,
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: 'red',
-    marginTop: 4,
+    marginTop: -5,
   },
   button: {
     backgroundColor: Color.primaryColor,
